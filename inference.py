@@ -486,7 +486,7 @@ class JointParticleFilter(ParticleFilter):
 
             # now loop through and update each entry in newParticle...
             "*** YOUR CODE HERE ***"
-            raiseNotDefined()
+            newParticle = [self.getPositionDistribution(gameState, oldParticle, i, self.ghostAgents[i]).sample() for i in range(self.numGhosts)]
 
             """*** END YOUR CODE HERE ***"""
             newParticles.append(tuple(newParticle))
