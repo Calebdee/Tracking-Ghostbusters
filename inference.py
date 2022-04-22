@@ -421,8 +421,11 @@ class JointParticleFilter(ParticleFilter):
         uniform prior.
         """
         self.particles = []
-        "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        
+        prior = list(itertools.product(self.legalPositions, repeat=self.numGhosts))
+        
+        random.shuffle(prior)
+        self.particles = prior[:self.numParticles]
 
     def addGhostAgent(self, agent):
         """
@@ -454,8 +457,23 @@ class JointParticleFilter(ParticleFilter):
         be reinitialized by calling initializeUniformly. The total method of
         the DiscreteDistribution may be useful.
         """
-        "*** YOUR CODE HERE ***"
-        raiseNotDefined()
+        
+        potentialGhosts = list(itertools.product(self.legalPositions, repeat=self.numGhosts))
+        beliefDist = self.getBeliefDistribution()
+        
+        for potential in potentialGhosts:
+            for i in range(self.numGhosts):
+                pacman = gameState.getPacmanPosition()
+                jail = self.getJailPosition(i)
+                ghost = potential[i]
+                beliefDist[potential] *= self.getObservationProb(observation[i], pacman, ghost, jail)
+                
+        if beliefDist.total() == 0:
+            self.initializeUniformly(gameState)
+        else:
+            self.particles = [beliefDist.sample() for i in range(self.numParticles)]
+                
+        
 
     def elapseTime(self, gameState):
         """
